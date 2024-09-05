@@ -1,35 +1,31 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import LandingPage from './pages/LandingPage';
+import Login from './pages/Login';
+import AdminPage from './pages/AdminPage';
 
-function App() {
-  const [count, setCount] = useState(0)
+// Authentication check function
+const isAuthenticated = (): boolean => {
+    // Logic to check if the user is authenticated (e.g., check a token in local storage)
+    return localStorage.getItem('authToken') !== null;
+};
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+const App = () => {
+    return (
+        <Router>
+            <Routes>
+                {/* Public routes */}
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/login" element={<Login />} />
 
-export default App
+                {/* Admin Dashboard - Protected route */}
+                <Route 
+                    path="/admin/*" 
+                    element={isAuthenticated() ? <AdminPage /> : <Navigate to="/login" />} 
+                />
+            </Routes>
+        </Router>
+    );
+};
+
+export default App;
